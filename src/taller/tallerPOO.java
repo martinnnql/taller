@@ -1,0 +1,603 @@
+package taller;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class tallerPOO {
+
+	public static void main(String[] args) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		Scanner s = new Scanner(System.in);
+		int opcion_menu1;
+		int opcion_usuarios;
+		int opcionModificar;
+		int opcionModificar2;
+		int opcionEl;
+		
+		do {
+			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
+			opcion_menu1 = s.nextInt();
+			
+			switch (opcion_menu1) {
+			
+			case 1: // Menu de Usuarios 
+				
+				boolean acceso = false;
+				
+				while (!acceso) {
+					//pedir usuarios y contra
+					s.nextLine();
+					System.out.println("Usuario: ");
+					String nombre_usuario = s.nextLine();
+				
+					
+					System.out.println("Contraseña: ");
+					String contraseña_intento = s.nextLine();
+					
+					// leer usuarios.txt
+					File arch = new File("Usuarios.txt");
+					Scanner sarch = new Scanner(arch);
+					
+					boolean encontrado = false;
+					
+					while (sarch.hasNextLine()) {
+						String linea = sarch.nextLine();
+						String[] partes = linea.split(";");
+						
+						String usuario = partes[0];
+						String contraseña = partes[1];
+						
+						//hacer comprobacion de usuario
+						
+						if (nombre_usuario.equals(usuario) && contraseña_intento.equals(contraseña)) {
+							acceso = true;
+							encontrado = true;
+							
+							if (acceso == true) {
+								//Menu dentro de usuarios
+								do {
+									System.out.println("\nBienvenido "+nombre_usuario+"!");
+									System.out.println("\n Que deseas realizar? \n1) Registrar actividad. \n2) Modificar actividad. \n3) Eliminar actividad. \n4) Cambiar contraseña. \n5) Salir");
+									opcion_usuarios = s.nextInt();
+									s.nextLine();
+									
+									switch (opcion_usuarios) {
+									case 1: 
+										//Registrar Actividad
+										
+										// Comprobacion fecha
+										String nuevaFecha = "";
+										boolean fechaValida = false;
+										
+										while (!fechaValida) {
+											System.out.println("Ingrese fecha de la actividad (dd/mm/aaaa): ");
+											nuevaFecha = s.nextLine();
+											
+											if (nuevaFecha.isEmpty()) { 
+												continue;
+											}
+											
+											String[] partesFecha = nuevaFecha.split("/");
+											
+											if (partesFecha.length != 3) {
+												System.err.println("Fecha invalida.");
+												continue;
+											}
+											
+											try {
+												int dia = Integer.parseInt(partesFecha[0]);
+												int mes = Integer.parseInt(partesFecha[1]);
+												int año = Integer.parseInt(partesFecha[2]);
+												
+												if (año < 2000 || año > 9999) {
+													System.err.println("Fecha invalida.");
+													continue;
+												}
+												if (mes > 12 || mes < 1) {
+													System.err.println("Fecha invalida.");
+													continue;
+												}
+												int diasMax;
+												
+												switch (mes) {
+												case 4: case 6: case 9: case 11:
+													diasMax = 30;
+													break;
+												case 2:
+													diasMax = 28;
+													break;
+												default:
+													diasMax = 31;
+													break;
+												}//corchete switch
+											if (dia < 1 || dia > diasMax) {
+												System.err.println("Fecha invalida.");
+												continue;
+											}
+											
+											fechaValida = true;
+											}catch (NumberFormatException e) {
+												System.err.println("Ingrese solamente numeros.");
+											}
+											
+										} // corchete while !fechavalida
+										
+										// Comprobacion horas de duracion
+										int nuevaHoras = 0;
+										boolean horasValida = false;
+										
+										while (!horasValida) {
+											System.out.println("Ingrese horas de duracion de la actividad: ");
+											nuevaHoras = s.nextInt();
+											s.nextLine();
+											
+											if (nuevaHoras < 0) {
+												System.err.println("Ingrese un numero valido.");
+												continue;
+											}
+											horasValida = true;
+										}// while !horasvalidas
+										
+										// Pedir nombre de la actividad
+										System.out.println("Ingrese la actividad: ");
+										String nuevaActividad = s.nextLine();
+										
+										// Meter nueva actividad a registros.txt
+										try {
+											FileWriter fw = new FileWriter("Registros.txt", true);
+											fw.write("\n" + nombre_usuario + ";" + nuevaFecha + ";" + nuevaHoras + ";" + nuevaActividad);
+											
+											fw.close();
+											
+											System.out.println("Actividad registrada con exito!");
+								
+										} catch (IOException e) {
+											System.err.println("Error al guardar la actividad.");
+										}
+										
+										break;
+									case 2:
+										
+										// Modificar actividad
+								
+										String[] usuarios = new String[300];
+										String[] fechas = new String[300]; // 300 por ser la cant maxima de actividades
+										int[] horas = new int[300];
+										String[] actividades = new String[300];
+										
+										int contador = 0;
+										
+										// leer nuevamente el txt registros
+										File archReg = new File("Registros.txt");
+										Scanner sarchReg = new Scanner(archReg);
+										
+										while (sarchReg.hasNextLine()) {
+											String lineaReg = sarchReg.nextLine();
+											String[] partesReg = lineaReg.split(";");
+											
+											if (partesReg.length < 4) {
+												continue;
+											}
+									        	usuarios[contador] = partesReg[0];
+												fechas[contador] = partesReg[1];
+												horas[contador] = Integer.parseInt(partesReg[2]);
+												actividades[contador] = partesReg[3];
+												contador++;
+											
+										} //while sarch hasnextline
+										sarchReg.close();
+										
+										// ordenar fechas de mas viejo a mas nuevo con bubble sort
+										for (int i = 0; i < contador - 1; i++) {
+											for (int j = 0; j < contador - i - 1; j++) {
+												String[] fecha1 = fechas[j].split("/");
+												String[] fecha2 = fechas[j+1].split("/");
+												
+												int dia1 = Integer.parseInt(fecha1[0]);
+												int mes1 = Integer.parseInt(fecha1[1]);
+												int año1 = Integer.parseInt(fecha1[2]);
+
+												int dia2 = Integer.parseInt(fecha2[0]);
+												int mes2 = Integer.parseInt(fecha2[1]);
+												int año2 = Integer.parseInt(fecha2[2]);
+												
+												//Comparar e intercambiar
+												if (año1 > año2 || (año1 == año2 && mes1 > mes2) || (año1 == año2 && mes1 == mes2 && dia1 > dia2)) {
+													
+													String auxUsuarios = usuarios[j];
+													usuarios[j] = usuarios[j+1];
+													usuarios[j+1] = auxUsuarios;
+													
+													String auxFecha = fechas[j];
+													fechas[j] = fechas[j+1];
+													fechas[j+1] = auxFecha;
+													
+													int auxHoras = horas[j];
+													horas[j] = horas[j+1];
+													horas[j+1] = auxHoras;
+													
+													String auxAct = actividades[j];
+													actividades[j] = actividades[j+1];
+													actividades[j+1] = auxAct;
+													
+													
+													}
+												}
+											}
+										
+										//filtrar para mostrar solo las actividades del usuario ingresado
+										
+										int[] indices = new int[300];
+										int contUser = 0;
+										
+										System.out.println("Cual actividad deseas modificar?\n");
+										System.out.println("0) Regresar.");
+										
+										for (int i = 0; i < contador; i++) {
+											if (usuarios[i].equals(nombre_usuario)) {
+												System.out.println((contUser + 1) + ")" + fechas[i] + ";" + horas[i] + ";" + actividades[i]);
+												indices[contUser] = i;
+												contUser++;
+											}
+										}
+										
+										if (contUser == 0) {
+											System.err.println("No hay actividades registradas.");
+											break;
+										}
+										
+										opcionModificar = s.nextInt();
+										s.nextLine();
+										
+										if (opcionModificar == 0) {
+											break;
+										}
+										
+										if (opcionModificar < 1 || opcionModificar > contUser) {
+											System.err.println("Opcion invalida.");
+										}
+										
+										int indice = indices[opcionModificar - 1];
+										
+										
+										while(true) {
+										
+										boolean seModifico = false;	
+											
+										System.out.println("Que deseas modificar?");
+										System.out.println("0) Regresar \n1) Fecha \n2) Duracion \n3) Tipo de actividad");
+										opcionModificar2 = s.nextInt();
+										s.nextLine();
+										
+										if (opcionModificar2 == 0) {
+											break;
+										}
+										
+										switch (opcionModificar2) {
+										case 1: 
+											// Modificar fecha
+											//falta control de errores para los 3 casos
+											
+											String nuevaFecha2;
+											boolean fechaValida2 = false;
+											
+											while (!fechaValida2) {
+											System.out.println("0) Regresar. \nIngrese la nueva fecha (dd/mm/aaaa): ");	
+											nuevaFecha2 = s.nextLine();
+											if (nuevaFecha2.equals("0")) {
+												break;
+											}
+											if (nuevaFecha2.isEmpty()) {
+												continue;
+											}
+											
+											String[] partesFecha2 = nuevaFecha2.split("/");
+											
+											if (partesFecha2.length != 3) {
+												System.err.println("Fecha invalida Enter para reintentar.");
+												continue;
+											}
+											
+											try {
+												int dia = Integer.parseInt(partesFecha2[0]);
+												int mes = Integer.parseInt(partesFecha2[1]);
+												int año = Integer.parseInt(partesFecha2[2]);
+
+												if (año < 2000 || año > 9999) {
+													System.err.println("Fecha invalida Enter para reintentar.");
+													continue;
+												}
+												
+												if (mes > 12 || mes < 1) {
+													System.err.println("Fecha invalida Enter para reintentar.");
+													continue;
+												}
+												
+												int diasMax;
+												
+												switch (mes) {
+												case 4: case 6: case 9: case 11:
+													diasMax = 30;
+													break;
+												case 2:
+													diasMax = 28;
+													break;
+												default:
+													diasMax = 31;
+													break;
+												}
+											
+												if (dia < 1 || dia > diasMax) {
+													System.err.println("Fecha invalida pulsa Enter para reintentar.");
+													continue;
+												}
+												
+												fechaValida2 = true;
+												
+											} catch (NumberFormatException e) {
+												System.err.println("Ingrese solamente numeros.");
+											}
+											
+											fechas[indice] = nuevaFecha2;
+										    seModifico = true;
+
+										}
+											
+											break;
+										case 2: 
+											//Modificar duracion
+											int nuevaHora = -1;
+
+											while (nuevaHora < 0) {
+											    System.out.println("0) Regresar. \nIngrese la nueva duracion: ");
+											    
+											    if (s.hasNextInt()) {
+											        nuevaHora = s.nextInt();
+											        s.nextLine();
+											        
+											        if (nuevaHora == 0) {
+											            break;
+											        }
+											        
+											        if (nuevaHora < 0) {
+											            System.err.println("Ingrese una duracion valida.");
+											        } else {
+											            horas[indice] = nuevaHora;
+											            seModifico = true;
+
+											            break;
+											        }
+											        
+											    } else {
+											        System.err.println("Ingrese solamente numeros.");
+											        s.nextLine(); // limpiar input
+											    }
+											}
+											
+											
+											break;
+										case 3: 
+											//Modificar tipo de actividad
+											System.out.println("0) Regresar. \nIngrese el nuevo tipo de actividad: ");
+											String nuevaAct = s.nextLine();
+											if (nuevaAct.equals("0")) {
+												break;
+											}
+											
+											actividades[indice] = nuevaAct;
+										    seModifico = true;
+
+											break;
+										default:
+											System.err.println("Ingrese una opcion valida.");
+										}
+										
+										//leer archivo para guardar los cambios
+										if (seModifico) {
+											try {
+										        FileWriter fw = new FileWriter("Registros.txt");
+										        
+										        for (int i = 0; i < contador; i++) {
+													fw.write(usuarios[i] + ";" + fechas[i] + ";" + horas[i] + ";" + actividades[i] + "\n");
+												}
+										        
+										        fw.close();
+										        System.out.println("Actividad modificada correctamente.");
+										        
+											}catch (Exception e) {
+												System.err.println("Error al guardar el cambio.");
+											}
+										} 
+									}
+										break;
+									case 3:
+										//Eliminar actividad
+										
+										// mostar txt ordenado ( copie y pegue el codigo de modificar txt )
+										
+										String[] usuariosEl = new String[300];
+										String[] fechasEl = new String[300]; // 300 por ser la cant maxima de actividades
+										int[] horasEl = new int[300];
+										String[] actividadesEl = new String[300];
+										
+										int contadorEl = 0;
+										
+										// leer nuevamente el txt registros
+										File archRegEl = new File("Registros.txt");
+										Scanner sarchRegEl = new Scanner(archRegEl);
+										
+										while (sarchRegEl.hasNextLine()) {
+											String lineaRegEl = sarchRegEl.nextLine();
+											String[] partesRegEl = lineaRegEl.split(";");
+											
+											if (partesRegEl.length < 4) {
+												continue;
+											}
+									        	usuariosEl[contadorEl] = partesRegEl[0];
+												fechasEl[contadorEl] = partesRegEl[1];
+												horasEl[contadorEl] = Integer.parseInt(partesRegEl[2]);
+												actividadesEl[contadorEl] = partesRegEl[3];
+												contadorEl++;
+											
+										} //while sarch hasnextline
+										sarchRegEl.close();
+										
+										// ordenar fechas de mas viejo a mas nuevo con bubble sort
+										for (int i = 0; i < contadorEl - 1; i++) {
+											for (int j = 0; j < contadorEl - i - 1; j++) {
+												String[] fecha1El = fechasEl[j].split("/");
+												String[] fecha2El = fechasEl[j+1].split("/");
+												
+												int dia1El = Integer.parseInt(fecha1El[0]);
+												int mes1El = Integer.parseInt(fecha1El[1]);
+												int año1El = Integer.parseInt(fecha1El[2]);
+
+												int dia2El = Integer.parseInt(fecha2El[0]);
+												int mes2El = Integer.parseInt(fecha2El[1]);
+												int año2El = Integer.parseInt(fecha2El[2]);
+												
+												//Comparar e intercambiar
+												if (año1El > año2El || (año1El == año2El && mes1El > mes2El) || (año1El == año2El && mes1El == mes2El && dia1El > dia2El)) {
+													
+													String auxUsuariosEl = usuariosEl[j];
+													usuariosEl[j] = usuariosEl[j+1];
+													usuariosEl[j+1] = auxUsuariosEl;
+													
+													String auxFechaEl = fechasEl[j];
+													fechasEl[j] = fechasEl[j+1];
+													fechasEl[j+1] = auxFechaEl;
+													
+													int auxHorasEl = horasEl[j];
+													horasEl[j] = horasEl[j+1];
+													horasEl[j+1] = auxHorasEl;
+													
+													String auxActEl = actividadesEl[j];
+													actividadesEl[j] = actividadesEl[j+1];
+													actividadesEl[j+1] = auxActEl;
+													
+													
+													}
+												}
+											}
+										
+										//filtrar para mostrar solo las actividades del usuario ingresado
+										
+										int[] indicesEl = new int[300];
+										int contUserEl = 0;
+										
+										System.out.println("Cual actividad deseas eliminar?\n");
+										System.out.println("0) Regresar.");
+										
+										for (int i = 0; i < contadorEl; i++) {
+											if (usuariosEl[i].equals(nombre_usuario)) {
+												System.out.println((contUserEl + 1) + ")" + fechasEl[i] + ";" + horasEl[i] + ";" + actividadesEl[i]);
+												indicesEl[contUserEl] = i;
+												contUserEl++;
+											}
+										}
+										
+										if (contUserEl == 0) {
+											System.err.println("No hay actividades registradas.");
+											break;
+										}
+										
+										opcionEl = s.nextInt();
+										s.nextLine();
+										
+										if (opcionEl == 0) {
+											break;
+										}
+										
+										if (opcionEl < 1 || opcionEl > contUserEl) {
+											System.err.println("Opcion invalida.");
+										}
+										
+										int indiceEl = indicesEl[opcionEl - 1];
+										
+										//Eliminar actividad del txt
+										for (int i = indiceEl; i < contadorEl - 1; i++) {
+											usuariosEl[i] = usuariosEl[i+1];
+											fechasEl[i] = fechasEl[i+1];
+											horasEl[i] = horasEl[i+1];
+											actividadesEl[i] = actividadesEl[i+1];
+											
+											
+										}// corchete for eliminar act
+										
+										contadorEl--;
+										
+										//guardar el arch sin la actividad q se elimino
+										try {
+									        FileWriter fw = new FileWriter("Registros.txt");
+									        
+									        for (int i = 0; i < contadorEl; i++) {
+												fw.write(usuariosEl[i] + ";" + fechasEl[i] + ";" + horasEl[i] + ";" + actividadesEl[i] + "\n");
+											}
+									        
+									        fw.close();
+									        System.out.println("Actividad eliminada correctamente.");
+									        
+										}catch (Exception e) {
+											System.err.println("Error al eliminar la actividad.");
+										}
+										
+										
+										
+										break;
+									case 4:
+										//Cambiar contraseña
+										
+										
+										
+										
+										break;
+									case 5:
+										System.out.println("Volviendo al menu...\n");
+										break;
+									default:
+										System.err.println("Ingrese una opcion valida.\n");
+									}
+									
+									
+									
+								}while (opcion_usuarios != 5);
+								
+							
+							
+							} // corchete if acceso true
+						}
+					
+					
+				} //corchete del while para leer el usuarios.txt
+				sarch.close();
+				
+				if (!encontrado) {
+					System.err.println("Acceso denegado, pulse enter para intentar nuevamente.");
+					
+			} //corchete del while !acceso
+			
+			} //corchete while acceso es false
+				
+				break;
+			case 2:
+				//Menu de Analisis
+				
+				
+				
+				
+				break;
+			case 3: 
+				System.out.println("Saliendo...");
+				break;
+			
+			default:
+				System.err.println("Ingrese una opcion valida.");
+			}
+		}while (opcion_menu1 != 3);
+		
+	}
+
+}
