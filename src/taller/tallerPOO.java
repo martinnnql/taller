@@ -599,5 +599,5 @@ public class tallerPOO {
 		}while (opcion_menu1 != 3);
 		
 	}
-
+	hola pe
 }
