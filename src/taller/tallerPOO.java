@@ -550,8 +550,67 @@ public class tallerPOO {
 									case 4:
 										//Cambiar contraseña
 										
+										String[] usuariosC = new String[300]; // aunque sean solamente 3 usuarios en todo momento es recomendable poner un numero alto para evitar cualquier error (hacer habito)
+										String[] contraseñaC = new String[300];
+										
+										int contadorC = 0;
+										
+										//leer usuarios.txt
+										File archUsuarios = new File("Usuarios.txt");
+										Scanner sarchUsuarios = new Scanner(archUsuarios);
+										
+										while (sarchUsuarios.hasNextLine()) {
+											String lineaC = sarchUsuarios.nextLine();
+											
+											String[] partesC = lineaC.split(";");
+											
+											usuariosC[contadorC] = partesC[0];
+											contraseñaC[contadorC] = partesC[1];
+											contadorC++;
+									
+										} //while sarchusuarios has nextline
+										sarchUsuarios.close();
 										
 										
+										int indiceUsuario = -1;
+										
+										for (int i = 0; i < contadorC; i++) {
+											if (usuariosC[i].equals(nombre_usuario)) {
+												indiceUsuario = i;
+												break;
+											}
+											
+										} //for buscar elementos usuariostxt
+										if (indiceUsuario == -1) {
+											System.err.println("Usuario no encontrado.");
+											break;
+										}
+										
+										//Pedir nueva contraseña
+										System.out.println("0) Regresar. \nIntroduzca la nueva contraseña: ");
+										String nuevaContra = s.nextLine();
+										
+										if (nuevaContra.equals("0")) {
+											System.out.println("Regresando. . .");
+											break;
+										}
+										
+										//Cambiar antigua contra por la nueva
+										contraseñaC[indiceUsuario] = nuevaContra;
+										
+										//Guardar cambios copiar y pegar codde d antes
+										try {
+											FileWriter fw = new FileWriter("Usuarios.txt");
+											
+											for (int i = 0; i<contadorC; i++) {
+												fw.write(usuariosC[i] + ";" + contraseñaC[i] + "\n");
+											}
+											fw.close();
+											System.out.println("Contraseña cambiada con exito!");
+											
+										}catch (Exception e) {
+											System.err.println("Error al cambiar contraseña.");
+										}
 										
 										break;
 									case 5:
@@ -561,16 +620,11 @@ public class tallerPOO {
 										System.err.println("Ingrese una opcion valida.\n");
 									}
 									
-									
-									
 								}while (opcion_usuarios != 5);
 								
-							
-							
 							} // corchete if acceso true
 						}
-					
-					
+				
 				} //corchete del while para leer el usuarios.txt
 				sarch.close();
 				
@@ -599,5 +653,4 @@ public class tallerPOO {
 		}while (opcion_menu1 != 3);
 		
 	}
-	hola pe
 }
