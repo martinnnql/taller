@@ -661,7 +661,7 @@ public class tallerPOO {
 				
 				do {
 						System.out.println("\nBienvenido al menu de Analisis! \nQue deseas realizar?");
-						System.out.println("\n1) Actividad mas realizada \n2) Actividad mas realizada por cada usuario \3) Usuario con mayor procrastinacion \n4) Ver todas las actividades \n5) Salir.");
+						System.out.println("\n1) Actividad mas realizada \n2) Actividad mas realizada por cada usuario \n3) Usuario con mayor procrastinacion \n4) Ver todas las actividades \n5) Salir.");
 						
 						try {
 						opcionMenuAnalisis = s.nextInt();
@@ -671,25 +671,231 @@ public class tallerPOO {
 						case 1: 
 							// Actividad mas realizada
 							
+							// Guardar actividades en listas, crear el contador y establecer el total de acts
+							String[] actividades = new String[300];
+							String[] usuarios = new String[300];
+							int[] contador = new int[300];
+							int totalActividades = 0;
 							
+							//leer txt
+							File arch = new File("Registros.txt");
+							Scanner sarch = new Scanner(arch);
+							
+							while (sarch.hasNextLine()) {
+								String linea = sarch.nextLine();
+								String[] partes = linea.split(";");
+								
+								String actividad = partes[3];
+								String usuario = partes[0];
+							    int duracion = Integer.parseInt(partes[2]);
+
+								// Buscar si existe la actividad, si existe se suma uno al contador, sino existe se agrega a al lista
+								
+								boolean encontrado = false;
+								
+								// buscar si existe
+								for (int i = 1; i < totalActividades; i++) {
+									if (actividades[i].equals(actividad)) {
+										contador[i]+= duracion;
+										encontrado = true;
+										break;
+									}
+								}
+								// Si no existe
+								if (!encontrado) {
+									actividades[totalActividades] = actividad;
+									contador[totalActividades] = duracion;
+									usuarios[totalActividades] = usuario;
+									totalActividades++;
+								}
+							}
+							sarch.close();
+							
+							// encontrar la mas repetida
+							int max = contador[0];
+							String actividadMasRepetida = actividades[0];
+							String usuarioMasRep = usuarios[0];
+							
+							//ordenar para enocontrar la actividad max 
+							for (int i = 1; i < totalActividades; i++) {
+								if (contador[i] > max) {
+									max = contador[i];
+									actividadMasRepetida = actividades[i];
+									usuarioMasRep = usuarios[i];
+								}
+							}
+							
+							System.out.println("La actividad mas realizada fue: " + actividadMasRepetida + " realizada durante: " + max + " horas, por: " + usuarioMasRep );
 							
 							break;
 						case 2:
 							// Actividad mas realizada por cada usuario
 							
+							//Guardar varaiables por cada uno de los 3 usuarios
+							String[] actividadesMartin = new String[300];
+							int[] contadorMartin = new int[300];
+							int totalMartin = 0;
 							
+							String[] actividadesCatalina = new String[300];
+							int[] contadorCatalina = new int[300];
+							int totalCatalina = 0;
 							
+							String[] actividadesEstefania = new String[300];
+							int[] contadorEstefania = new int[300];
+							int totalEstefania = 0;
+							
+							// leer txt
+							File arch2 = new File("Registros.txt");
+							Scanner sarch2 = new Scanner(arch2);
+							
+							while (sarch2.hasNextLine()) {
+								String linea2 = sarch2.nextLine();
+								String[] partes2 = linea2.split(";");
+								
+								String actividad2 = partes2[3];
+								String usuario2 = partes2[0];
+							    int duracion2 = Integer.parseInt(partes2[2]);
+
+							
+							// es mejor crear un metodo para contar para no repetir codigo
+							if (usuario2.equals("Martin")) {
+								totalMartin = contarActividades(actividadesMartin, contadorMartin, totalMartin, actividad2, duracion2);
+							}else if (usuario2.equals("Catalina")) {
+								totalCatalina = contarActividades(actividadesCatalina, contadorCatalina, totalCatalina, actividad2, duracion2);
+							}else if (usuario2.contentEquals("Estefania")) {
+								totalEstefania = contarActividades(actividadesEstefania, contadorEstefania, totalEstefania, actividad2, duracion2);
+							}
+							
+							}
+							sarch2.close();
+							
+							//crear metodo para mostrar la actividad mas realizada por usuaurio
+							mostrarMasRealizada(actividadesMartin, contadorMartin, totalMartin, "Martin");
+							mostrarMasRealizada(actividadesCatalina, contadorCatalina, totalCatalina, "Catalina");
+							mostrarMasRealizada(actividadesEstefania, contadorEstefania, totalEstefania, "Estefania");
+
 							break;
 						case 3:
 							// Usuario con mayor procrastinacion
 							
+							int tiempoMartin = 0;
+							int tiempoCatalina = 0;
+							int tiempoEstefania = 0;
 							
+							File arch3 = new File("Registros.txt");
+							Scanner sarch3 = new Scanner(arch3);
+							
+							while (sarch3.hasNextLine()) {
+								String linea3 = sarch3.nextLine();
+								String[] partes3 = linea3.split(";");
+								
+								String usuario3 = partes3[0];
+							    int duracion3 = Integer.parseInt(partes3[2]);
+
+							    if (usuario3.equals("Martin")) {
+							    	tiempoMartin+=duracion3;
+							    }
+							    if (usuario3.equals("Catalina")) {
+							    	tiempoCatalina+=duracion3;
+							    }
+							    if (usuario3.equals("Estefania")) {
+							    	tiempoEstefania+=duracion3;
+							    }
+							}
+							sarch3.close();
+							
+							int maxTiempo = tiempoMartin;
+							String usuarioMax = "Martin";
+
+							if (tiempoCatalina > maxTiempo) {
+							    maxTiempo = tiempoCatalina;
+							    usuarioMax = "Catalina";
+							}
+
+							if (tiempoEstefania > maxTiempo) {
+							    maxTiempo = tiempoEstefania;
+							    usuarioMax = "Estefania";
+							}
+							
+							System.out.println("Usuario con mayor procrastinacion: " + usuarioMax + " con " + maxTiempo + " horas.");
 							
 							break;
 						case 4:
 							// Ver todas las actividades
 							
+							//copiado y pegado de eliminar actividades jeje
 							
+							String[] usuariosEl = new String[300];
+							String[] fechasEl = new String[300]; // 300 por ser la cant maxima de actividades
+							int[] horasEl = new int[300];
+							String[] actividadesEl = new String[300];
+							
+							int contadorEl = 0;
+							
+							// leer nuevamente el txt registros
+							File archRegEl = new File("Registros.txt");
+							Scanner sarchRegEl = new Scanner(archRegEl);
+							
+							while (sarchRegEl.hasNextLine()) {
+								String lineaRegEl = sarchRegEl.nextLine();
+								String[] partesRegEl = lineaRegEl.split(";");
+								
+								if (partesRegEl.length < 4) {
+									continue;
+								}
+						        	usuariosEl[contadorEl] = partesRegEl[0];
+									fechasEl[contadorEl] = partesRegEl[1];
+									horasEl[contadorEl] = Integer.parseInt(partesRegEl[2]);
+									actividadesEl[contadorEl] = partesRegEl[3];
+									contadorEl++;
+								
+							} //while sarch hasnextline
+							sarchRegEl.close();
+							
+							// ordenar fechas de mas viejo a mas nuevo con bubble sort
+							for (int i = 0; i < contadorEl - 1; i++) {
+								for (int j = 0; j < contadorEl - i - 1; j++) {
+									String[] fecha1El = fechasEl[j].split("/");
+									String[] fecha2El = fechasEl[j+1].split("/");
+									
+									int dia1El = Integer.parseInt(fecha1El[0]);
+									int mes1El = Integer.parseInt(fecha1El[1]);
+									int año1El = Integer.parseInt(fecha1El[2]);
+
+									int dia2El = Integer.parseInt(fecha2El[0]);
+									int mes2El = Integer.parseInt(fecha2El[1]);
+									int año2El = Integer.parseInt(fecha2El[2]);
+									
+									//Comparar e intercambiar
+									if (año1El > año2El || (año1El == año2El && mes1El > mes2El) || (año1El == año2El && mes1El == mes2El && dia1El > dia2El)) {
+										
+										String auxUsuariosEl = usuariosEl[j];
+										usuariosEl[j] = usuariosEl[j+1];
+										usuariosEl[j+1] = auxUsuariosEl;
+										
+										String auxFechaEl = fechasEl[j];
+										fechasEl[j] = fechasEl[j+1];
+										fechasEl[j+1] = auxFechaEl;
+										
+										int auxHorasEl = horasEl[j];
+										horasEl[j] = horasEl[j+1];
+										horasEl[j+1] = auxHorasEl;
+										
+										String auxActEl = actividadesEl[j];
+										actividadesEl[j] = actividadesEl[j+1];
+										actividadesEl[j+1] = auxActEl;
+									}
+								}		
+							}
+							
+							int[] indicesEl = new int[300];
+							int contUserEl = 0;
+							
+							for (int i = 0; i < contadorEl; i++) {
+									System.out.println((contUserEl + 1) + ")" + usuariosEl[i] + ";" + fechasEl[i] + ";" + horasEl[i] + ";" + actividadesEl[i]);
+									indicesEl[contUserEl] = i;
+									contUserEl++;
+								}
 							
 							break;
 						case 5:
@@ -720,6 +926,47 @@ public class tallerPOO {
 				s.nextLine();
 			}
 		}while (opcion_menu1 != 3);
+		s.close();
+	}
+
+	private static void mostrarMasRealizada(String[] actividades, int[] contador, int total, String usuario) {
+		// TODO Auto-generated method stub
 		
+		int max = contador[0];
+		String actividadMasRepetida = actividades[0];
+		
+		//ordenar para enocontrar la actividad max 
+		for (int i = 0; i < total; i++) {
+			if (contador[i] > max) {
+				max = contador[i];
+				actividadMasRepetida = actividades[i];
+			}
+		}
+		
+		System.out.println("*" + usuario + " -> " + actividadMasRepetida + " -> con " + max + " horas registradas."  );
+		
+		
+	}
+
+	private static int contarActividades(String[] actividades, int[] contador, int total, String actividad, int duracion) {
+		// TODO Auto-generated method stub
+		boolean encontrado = false;
+		
+		// buscar si existe
+		for (int i = 0; i < total; i++) {
+			if (actividades[i].equals(actividad)) {
+				contador[i]+= duracion;
+				encontrado = true;
+				break;
+			}
+		}
+		// Si no existe
+		if (!encontrado) {
+			actividades[total] = actividad;
+			contador[total] = duracion;
+			total++;
+		}
+		
+		return total;
 	}
 }
