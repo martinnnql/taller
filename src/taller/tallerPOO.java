@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class tallerPOO {
@@ -11,14 +12,16 @@ public class tallerPOO {
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
 		Scanner s = new Scanner(System.in);
-		int opcion_menu1;
-		int opcion_usuarios;
-		int opcionModificar;
+		int opcion_menu1 = 0;
+		int opcion_usuarios = 0;
+		int opcionModificar = 0;
 		int opcionModificar2;
 		int opcionEl;
 		
 		do {
 			System.out.println("1) Menu de Usuarios \n2) Menu de Analisis \n3) Salir");
+			
+			try {
 			opcion_menu1 = s.nextInt();
 			
 			switch (opcion_menu1) {
@@ -61,6 +64,8 @@ public class tallerPOO {
 								do {
 									System.out.println("\nBienvenido "+nombre_usuario+"!");
 									System.out.println("\n Que deseas realizar? \n1) Registrar actividad. \n2) Modificar actividad. \n3) Eliminar actividad. \n4) Cambiar contraseña. \n5) Salir");
+									
+									try {
 									opcion_usuarios = s.nextInt();
 									s.nextLine();
 									
@@ -258,6 +263,7 @@ public class tallerPOO {
 										
 										if (opcionModificar < 1 || opcionModificar > contUser) {
 											System.err.println("Opcion invalida.");
+											break;
 										}
 										
 										int indice = indices[opcionModificar - 1];
@@ -269,6 +275,8 @@ public class tallerPOO {
 											
 										System.out.println("Que deseas modificar?");
 										System.out.println("0) Regresar \n1) Fecha \n2) Duracion \n3) Tipo de actividad");
+										
+										try {
 										opcionModificar2 = s.nextInt();
 										s.nextLine();
 										
@@ -297,7 +305,7 @@ public class tallerPOO {
 											String[] partesFecha2 = nuevaFecha2.split("/");
 											
 											if (partesFecha2.length != 3) {
-												System.err.println("Fecha invalida Enter para reintentar.");
+												System.err.println("Fecha invalida.");
 												continue;
 											}
 											
@@ -307,12 +315,12 @@ public class tallerPOO {
 												int año = Integer.parseInt(partesFecha2[2]);
 
 												if (año < 2000 || año > 9999) {
-													System.err.println("Fecha invalida Enter para reintentar.");
+													System.err.println("Fecha invalida.");
 													continue;
 												}
 												
 												if (mes > 12 || mes < 1) {
-													System.err.println("Fecha invalida Enter para reintentar.");
+													System.err.println("Fecha invalida.");
 													continue;
 												}
 												
@@ -331,7 +339,7 @@ public class tallerPOO {
 												}
 											
 												if (dia < 1 || dia > diasMax) {
-													System.err.println("Fecha invalida pulsa Enter para reintentar.");
+													System.err.println("Fecha invalida.");
 													continue;
 												}
 												
@@ -393,6 +401,11 @@ public class tallerPOO {
 											break;
 										default:
 											System.err.println("Ingrese una opcion valida.");
+										}
+										
+										}catch (InputMismatchException e) {
+											System.err.println("Seleccione una opacion valida.");
+											s.nextLine();
 										}
 										
 										//leer archivo para guardar los cambios
@@ -513,6 +526,7 @@ public class tallerPOO {
 										
 										if (opcionEl < 1 || opcionEl > contUserEl) {
 											System.err.println("Opcion invalida.");
+											break;
 										}
 										
 										int indiceEl = indicesEl[opcionEl - 1];
@@ -620,6 +634,11 @@ public class tallerPOO {
 										System.err.println("Ingrese una opcion valida.\n");
 									}
 									
+									}catch (InputMismatchException e) {
+										System.err.println("Seleccione una opacion valida.");
+										s.nextLine();
+									}
+									
 								}while (opcion_usuarios != 5);
 								
 							} // corchete if acceso true
@@ -638,9 +657,54 @@ public class tallerPOO {
 				break;
 			case 2:
 				//Menu de Analisis
+				int opcionMenuAnalisis = 0;
 				
-				
-				
+				do {
+						System.out.println("\nBienvenido al menu de Analisis! \nQue deseas realizar?");
+						System.out.println("\n1) Actividad mas realizada \n2) Actividad mas realizada por cada usuario \3) Usuario con mayor procrastinacion \n4) Ver todas las actividades \n5) Salir.");
+						
+						try {
+						opcionMenuAnalisis = s.nextInt();
+						s.nextLine();
+						
+						switch (opcionMenuAnalisis) {
+						case 1: 
+							// Actividad mas realizada
+							
+							
+							
+							break;
+						case 2:
+							// Actividad mas realizada por cada usuario
+							
+							
+							
+							break;
+						case 3:
+							// Usuario con mayor procrastinacion
+							
+							
+							
+							break;
+						case 4:
+							// Ver todas las actividades
+							
+							
+							
+							break;
+						case 5:
+							System.out.println("Saliendo . . .");
+							break;
+						default:
+							 System.err.println("Ingrese una opcion valida.");
+							
+							}
+						
+						}catch (InputMismatchException e) {
+							System.err.println("Seleccione una opacion valida.");
+							s.nextLine(); //Siempre poner el s.nextline en el catch pa limpiar el buffer
+						}
+				} while (opcionMenuAnalisis != 5);
 				
 				break;
 			case 3: 
@@ -649,6 +713,11 @@ public class tallerPOO {
 			
 			default:
 				System.err.println("Ingrese una opcion valida.");
+			}
+			
+			}catch (InputMismatchException e) {
+				System.err.println("Seleccione una opacion valida.");
+				s.nextLine();
 			}
 		}while (opcion_menu1 != 3);
 		
